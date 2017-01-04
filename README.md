@@ -110,8 +110,8 @@ void bof(){
 	gets(buf);
 	__asm__("mov %gs:0x14, %ecx\n\t"
 		"xor 4(%ebp), %ecx\n\t"
-                "mov %ecx, 4(%ebp)\n\t"
-                "xor %ecx, %ecx");
+		"mov %ecx, 4(%ebp)\n\t"
+		"xor %ecx, %ecx");
 	return;
 }
 

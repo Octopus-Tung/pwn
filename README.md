@@ -1,6 +1,7 @@
 #Buffer Overflow With DEP
 
 我設計了一個有buffer overflow漏洞的程式，開啟保護**DEP（NX）**的保護
+
 為了方便實作DEP的bypass，ASLR調整為1，不開啟canary跟PIE的保護
 
 code：
@@ -23,7 +24,9 @@ int main(){
 ```
 
 DEP不允許區段的寫入跟執行權限同時開啟
+
 所以stack上佈好shellcode也無法執行
+
 但有人想到一種bypass的方式
 
 ---
@@ -32,10 +35,13 @@ DEP不允許區段的寫入跟執行權限同時開啟
 想要我的財寶嗎？想要的話可以全部給你，去找吧！我把所有財寶都放在那裡XD
 
 >找到程式中，可執行的片段（gadget），組合成shellcode
+
 >gadgets的最後一個指令是ret的話
+
 >就可以持續串聯下一個gadget
 
 利用ROPgadget這套工具可以快速建好gadgets，只是要想辦法組好shellcode而已
+
 攻擊程式：
 
 ```
@@ -64,6 +70,7 @@ r.close()
 ```
 
 >某天我想到一個娛樂性有點高的防禦方法
+
 >可以擋下ROP這類的攻擊，但是目前仍有一點缺陷...
 
 ===
@@ -71,11 +78,17 @@ r.close()
 #Defense ROP
 
 其實，我一開始只是想讓他跳不到shellcode而已
+
 為了完成這樣的目的，在程式流程剛進入callee時
+
 我把gs段的0x14(就是32bits下的canary)跟ebp+4(return address)做XOR
+
 然後放回去ebp+4
+
 程式要返回caller之前，再取canary跟ebp+4做XOR，還原真正的return address
+
 **如果ebp+4已經被竄改過**，他還是會和canary做XOR
+
 這樣就跳不到attacker想要的位址了，感覺起來還不錯
 
 code:（asm inline模擬版本）
@@ -108,7 +121,10 @@ int main(){
 缺陷是stack被洩漏的話，attacker可以先調整好第一個gadget
 
 **娛樂性**在於：我真的不知道他會跳去哪裡
+
 如果他XOR做完的return address是合法的，我完全無法預測會發生什麼事XD
+
 目前當機次數：1
+
 
 暫時先寫這樣，再慢慢擴充好了

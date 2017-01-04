@@ -32,7 +32,6 @@ DEP不允許區段的寫入跟執行權限同時開啟
 ---
 
 ###ROP
-想要我的財寶嗎？想要的話可以全部給你，去找吧！我把所有財寶都放在那裡XD
 
 >找到程式中，可執行的片段（gadget），組合成shellcode
 
@@ -68,6 +67,10 @@ r.interactive()
 
 r.close()
 ```
+
+程式流程從bof轉到gadgets造出來的shellcode：
+
+![](./sc_gadgets.png)
 
 >某天我想到一個娛樂性有點高的防禦方法
 
@@ -117,6 +120,16 @@ int main(){
 	return 0;
 }
 ```
+
+再碰上ROP的時候，先看一下被overflower的return address
+
+![](./Defense1.png)
+
+然後再來看看他跟canary做XOR之後的樣子，就不知道跑去哪裡了
+
+而且還因為是不合法的位址，程式終止了
+
+![](./Defense2.png)
 
 缺陷是stack被洩漏的話，attacker可以先調整好第一個gadget
 
